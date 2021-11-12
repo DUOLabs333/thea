@@ -4,7 +4,7 @@ import cherrypy
 if __name__ == '__main__':
     cherrypy.tree.graft(app, '/')
     cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                            'server.socket_port': 5000,
+                            'server.socket_port': 6001,
                             'engine.autoreload.on': False,
                             })
 

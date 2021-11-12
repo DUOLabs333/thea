@@ -12,91 +12,50 @@
 <a href="#home"></a>
 <body>
 </p><p><p>
-  <div class="search-wrap">
   <div class="search-box"><center>
   <div class="textbox">
-  <form action="{{ url_for('get_words', word=word) }}" method="POST">
-  <input type="text" input class="textbox" name="word" placeholder="Search for synonyms..." autofocus>
-  <input type="submit" id="button" value="Get synonyms"></div></form>
-  </div></div></div></div></p></p>
+  <form action="{{ url_for('get_words', word=word) }}" method="GET">
+  <input type="text" input class="textbox" name="q" placeholder="Search for synonyms..." autofocus>
+  </div></form>
+  </div></div></p></p>
   <center>
-<div class="content"><b>{{word}}:</b> 
+{% if mode == 'search' %}
+  <div class="content"><b>{{word}}:</b> 
+{% endif %}
 <div class="synonyms">
 <div class="text-wrap">
-  <!-- This is pretty ugly, but it works --> 
-   {% if (synonyms is iterable) and (synonyms is not string) %}
-   <font size="5">
-    <!-- Number each list of words with a common meaning -->
-    <!-- Don't insert a comma if we're at the last word -->
-    {% for meanings in synonyms %}
-      {% if (loop.length > 1) %}
-        <b>{% print("(""%s"")" % loop.index) %}</b>
-      {% endif %}
-      {% for w in meanings %}
+  {% if mode == 'search' %}
+    <!-- This is pretty ugly, but it works --> 
+     {% if (synonyms is iterable) and (synonyms is not string) %}
+     <font size="5">
+      <!-- Number each list of words with a common meaning -->
+      <!-- Don't insert a comma if we're at the last word -->
+      {% for w in synonyms %}
         {% if loop.last %}
-         <a href="../words/{{w}}">{{w}}</a>
+         <a href="../words?q={{w}}" style="text-decoration: none;" >{{w}}</a>
         {% elif not loop.last %}
-          <a href="../words/{{w}}">{{w}}</a>,
+          <a href="../words?q={{w}}" style="text-decoration: none;" >{{w}}</a>,
         {% endif %}
       {% endfor %}
-    {% endfor %}
-    <!-- If spellcheck is non-null, the user misspelled the search query -->
-  {% elif spellcheck and (spellcheck != word) %}
-        Did you mean 
-        <!-- If the list has > 1 element, and we're on the last element, no "," but add a "or" and "?" -->
-        <!-- Or if it has just one element, no "," and add a "?" -->
-        <!-- If not the last element in loop, add "," to end -->
-        {% for s in spellcheck %}
-          {% if (loop.last) and (loop.length > 1) %}
-            or <a href="../words/{{s}}">{{ s }}</a>?
-          {% elif (loop.length == 1) %}
-               <a href="../words/{{s}}">{{ s }}</a>?
-          {% elif not loop.last %}
-            <a href="../words/{{s}}">{{ s }}</a>,
-          {% endif %}
-        {% endfor %}
-  {% else %}
-    <!-- Otherwise, display Synonyms not found string -->
-    {{ synonyms }}
-  {% endif %}
+      <!-- If spellcheck is non-null, the user misspelled the search query -->
+    {% elif spellcheck and (spellcheck != word) %}
+          Did you mean 
+          <!-- If the list has > 1 element, and we're on the last element, no "," but add a "or" and "?" -->
+          <!-- Or if it has just one element, no "," and add a "?" -->
+          <!-- If not the last element in loop, add "," to end -->
+          {% for s in spellcheck %}
+            {% if (loop.last) and (loop.length > 1) %}
+              or <a href="../words/{{s}}">{{ s }}</a>?
+            {% elif (loop.length == 1) %}
+                 <a href="../words/{{s}}">{{ s }}</a>?
+            {% elif not loop.last %}
+              <a href="../words/{{s}}">{{ s }}</a>,
+            {% endif %}
+          {% endfor %}
+    {% else %}
+      <!-- Otherwise, display Synonyms not found string -->
+      {{ synonyms }}
+    {% endif %}
+  {% endif%}
 </font><p><p></div></div>
 <p><p></p></p>
-<div class="textbox">
-  Rhymes:
-<div class="rhymes">
-  <div class="text-wrap">
-    {% if (rhymes is iterable) and (rhymes is not string) %}
-   <font size="5">
-    {% for w in rhymes %}
-        {% if loop.last %}
-         <a href="../words/{{w}}">{{w}}</a>
-        {% elif not loop.last %}
-          <a href="../words/{{w}}">{{w}}</a>,
-        {% endif %}
-      {% endfor %}
-    {% else %}
-      {{ rhymes }}
-    {% endif %}
-</div></div></div>
-<p><p></p></p>
-<div class="textbox">
-  Definition: <br></div>
-<div class="definitions">
-  <div class="text-wrap">
-{% if definitions is not string %}
-  {% for parts, defin in definitions.items() %}
-    <b>{{parts}}: </b>{{defin}}<br>
-    {% endfor %}
-{% else %}
-    {{definitions}}
-{% endif %}
-</div></div>
-<p></p>
-<div class="textbox">
-  Etymology: <br></div>
-<div class="etymology">
-  <div class="text-wrap">
-    {{ etymology|safe }}
-</div></div>
-<div class="footer">Refresh the main page or <a href="../">go back</a> for a random word<br>
-<a href="https://github.com/SyntrophicConsortium/synonym-web">Synonym-web</a> is brought to you by <a href="https://github.com/SyntrophicConsortium">Syntrophic Consortium</a> and <br><a href="https://dictionaryapi.com/"><img src="/static/mwlogo.png" width="50" height="50"/></a></div>

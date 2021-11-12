@@ -7,12 +7,6 @@ import json
 import random
 import requests
 
-# API key for dictionaryapi.com thesaurus
-syn_key = ""
-# API key for dictionaryapi.com dictionary
-dict_key = ""
-
-
 class ReverseProxied(object):
     ''' Fix to allow subfolder locations on the reverse proxy '''
     def __init__(self, app):
@@ -63,37 +57,12 @@ def findkeys(node, keyval):
                 yield x
 
 
-def get_defin(word):
-    url = "https://dictionaryapi.com/api/v3/references/collegiate/json/%s?key=%s" % (word, dict_key)
-    response = requests.get(url).text
-    json_data = json.loads(response)
-
-    defs = list(flatten(findkeys(json_data, 'shortdef')))
-    speechparts = list(findkeys(json_data, 'fl'))
-    combined = [val for pair in zip(speechparts, defs) for val in pair]
-    i = iter(combined)
-    combined = dict(zip(i, i))
-
-    try:
-        etymology = list(flatten(findkeys(json_data, 'et')))[1]
-        etymology = etymology.replace('{it}', '<i>').replace('{/it}', '</i>').replace('{ma}', '').replace('{/ma}', '')
-    except:
-        etymology = "No etymology"
-
-    if combined:
-        return (combined, etymology)
-    else:
-        combined = "No definitions found"
-        return (combined, etymology)
-
-
 def get_synonyms(word):
-    url = "https://www.dictionaryapi.com/api/v3/references/thesaurus/json/%s?key=%s" % (word, syn_key)
-    response = requests.get(url).text
-    json_data = json.loads(response)
-    syns = list(findkeys(json_data, 'syns'))
-
-    synlists = [s for g in syns for s in g ]
+    synlists=None
+    with open('mthesaur.txt') as words:
+        for line in words:
+            if line.split(',')[0].lower()==word.lower():
+                synlists=line.split(',')[1:]
 
     if synlists:
         return synlists
@@ -109,26 +78,11 @@ def checkspelling(word):
     for w in misspelled:
         return list(spell.candidates(w))
 
-
-def get_rhymes(word):
-    url = "https://api.datamuse.com/words?rel_rhy=%s" % word
-    response = requests.get(url).text
-    json_data = json.loads(response)
-    rhymes = list(findkeys(json_data, 'word'))
-
-    if rhymes:
-        return rhymes
-    else:
-        rhymes = "No rhymes found"
-        return rhymes
-
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        word = request.form['word']
 
     wordlist = open('words.txt')
+    mode='index'
     line = next(wordlist)
     # Pick a random word from the word list file
     for num, line in enumerate(wordlist):
@@ -138,25 +92,19 @@ def index():
     wordlist.close()
 
     words = get_synonyms(word)
-    defin, etym = get_defin(word)
-    rhymes = get_rhymes(word)
 
     return render_template(
-        'index.html', word=word, synonyms=words, definitions=defin, etymology=etym, rhymes=rhymes)
+        'index.html', word=word, synonyms=words)
 
 
-@app.route('/words/<word>', methods=['GET', 'POST'])
-def get_words(word):
-    if request.method == 'POST':
-        word = request.form['word']
-
+@app.route('/words')
+def get_words():
+    word=request.args.get('q')
+    mode='search'
     words = get_synonyms(word)
-    defin, etym = get_defin(word)
-    rhymes = get_rhymes(word)
-    checkword = checkspelling(word)
 
     return render_template(
-        'index.html', word=word, synonyms=words, definitions=defin, etymology=etym, spellcheck=checkword, rhymes=rhymes)
+        'index.html', word=word, synonyms=words,mode=mode)
 
 
 ''' Sends no-cache headers to browser, for easier web development '''
@@ -182,4 +130,4 @@ if __name__ == '__main__':
     #app.config.update(TEMPLATES_AUTO_RELOAD=True)
     app.config['PREFERRED_URL_SCHEME'] = 'http'
     #app.run(host='0.0.0.0', port=5000, threaded=True, debug=True)
-    app.run(host='0.0.0.0', port=5000, threaded=True, debug=False)
+    app.run(host='0.0.0.0', port=6001, threaded=True, debug=False)
