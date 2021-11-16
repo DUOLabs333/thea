@@ -80,21 +80,10 @@ def checkspelling(word):
 
 @app.route('/')
 def index():
-
-    wordlist = open('words.txt')
     mode='index'
-    line = next(wordlist)
-    # Pick a random word from the word list file
-    for num, line in enumerate(wordlist):
-        if random.randrange(num + 2):
-            continue
-        word = line.rstrip("\n")
-    wordlist.close()
-
-    words = get_synonyms(word)
 
     return render_template(
-        'index.html', word=word, synonyms=words)
+        'index.html')
 
 
 @app.route('/words')
