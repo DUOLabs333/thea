@@ -7,7 +7,7 @@ With Thea you can: query for words in your browser and get synonyms. It also off
 ## Installation:
     git clone https://github.com/DUOLabs333/thea.git
     cd thea/
-    pdm reinstall
+    pdm sync -r
     cd app/ 
 	pdm run python3 wsgi.py
     Browse to http://localhost:5000 (can be changed with environment variable PORT)
