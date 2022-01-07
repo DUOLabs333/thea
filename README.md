@@ -3,16 +3,14 @@ Self-hosted web-based thesaurus written in Python 3. Fork of [Synonym-web](https
 
 With Thea you can: query for words in your browser and get synonyms. It also offers spelling suggestions for mispelled words
 
-Depends on pyspellchecker (https://github.com/barrust/pyspellchecker), Flask, Requests, and CherryPy (see requirements.txt)
 
 ## Installation:
-    git clone https://github.com/andyforceno/synonym-web.git
-    cd synonym-web/
-    (Setting up a virtual environment is a good idea, but not covered here)
-    pip install -r requirements.txt
+    git clone https://github.com/DUOLabs333/thea.git
+    cd thea/
+    pdm reinstall
     cd app/ 
-	python3 wsgi.py
-    Browse to http://localhost:6001 (can be changed with environment variable `PORT`
+	pdm run python3 wsgi.py
+    Browse to http://localhost:5000 (can be changed with environment variable `PORT`)
 
 ## Attribution:
 Synonyms are from Gutenburg: 

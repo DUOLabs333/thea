@@ -91,9 +91,10 @@ def get_words():
     word=request.args.get('q')
     mode='search'
     words = get_synonyms(word)
+    checkword = checkspelling(word)
 
     return render_template(
-        'index.html', word=word, synonyms=words,mode=mode)
+        'index.html', word=word, synonyms=words,mode=mode,spellcheck=checkword)
 
 
 ''' Sends no-cache headers to browser, for easier web development '''
@@ -119,4 +120,4 @@ if __name__ == '__main__':
     #app.config.update(TEMPLATES_AUTO_RELOAD=True)
     app.config['PREFERRED_URL_SCHEME'] = 'http'
     #app.run(host='0.0.0.0', port=5000, threaded=True, debug=True)
-    app.run(host='0.0.0.0', port=6001, threaded=True, debug=False)
+    app.run(host='127.0.0.1', port=200, threaded=True, debug=False)

@@ -45,11 +45,11 @@
           <!-- If not the last element in loop, add "," to end -->
           {% for s in spellcheck %}
             {% if (loop.last) and (loop.length > 1) %}
-              or <a href="../words/{{s}}">{{ s }}</a>?
+              or <a href="../words?q={{s}}">{{ s }}</a>?
             {% elif (loop.length == 1) %}
-                 <a href="../words/{{s}}">{{ s }}</a>?
+                 <a href="../words?q={{s}}">{{ s }}</a>?
             {% elif not loop.last %}
-              <a href="../words/{{s}}">{{ s }}</a>,
+              <a href="../words?q={{s}}">{{ s }}</a>,
             {% endif %}
           {% endfor %}
     {% else %}
