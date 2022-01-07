@@ -10,7 +10,7 @@ With Thea you can: query for words in your browser and get synonyms. It also off
     pdm reinstall
     cd app/ 
 	pdm run python3 wsgi.py
-    Browse to http://localhost:5000 (can be changed with environment variable `PORT`)
+    Browse to http://localhost:5000 (can be changed with environment variable PORT)
 
 ## Attribution:
 Synonyms are from Gutenburg: 
