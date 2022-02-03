@@ -1,7 +1,10 @@
 #! /usr/bin/python3
 
 from flask import Flask, render_template, request
-from collections import Iterable
+try:
+	from collections import Iterable
+except ImportError:
+	from collections.abc import Iterable
 from spellchecker import SpellChecker
 import json
 import random
