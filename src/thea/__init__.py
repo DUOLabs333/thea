@@ -1,7 +1,19 @@
-import readline,json,os
+import readline,json,os,signal
 from spellchecker import SpellChecker
 
-thesaur=json.load(open(os.path.join(os.path.dirname(__file__),'test.json'),'r'))
+thesaur={}
+
+if 1:
+    with open(os.path.join(os.path.dirname(__file__),'thesaur.txt'),'r') as words:
+        for line in words:
+            word=line.split(',')[0].lower()
+            synlists=line.split(',')[1:]
+            if word not in thesaur:
+                thesaur[word]=synlists
+            else:
+                thesaur[word].extend(synlists)
+else:
+    thesaur=json.load(open(os.path.join(os.path.dirname(__file__),'thesaur.json'),'r'))
 
 results=[]
 prev_word=""
@@ -13,8 +25,12 @@ def checkspelling(word):
     spell = SpellChecker()
     misspelled = spell.unknown([word])
     for w in misspelled:
-        return [_ for _ in list(spell.candidates(w)) if _.lower() in thesaur]
-        
+        return [_ for _ in list(spell.candidates(w) or []) if _.lower() in thesaur]
+
+def _exit(a,b):
+    print()
+    exit()
+signal.signal(signal.SIGINT,_exit)        
 while True:
     word=input("Enter word to search: ")
     word=word.strip().lower()
