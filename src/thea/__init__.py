@@ -30,6 +30,10 @@ def checkspelling(word):
 def _exit(a,b):
     print()
     exit()
+
+def format_results(_list,offset=0):
+    return ", ".join([f"{offset+i+1}. {e}" for i,e in enumerate(_list)])
+    
 signal.signal(signal.SIGINT,_exit)        
 while True:
     word=input("Enter word to search: ")
@@ -57,5 +61,17 @@ while True:
         if not results:
             print("No synonyms found")
             results=[]
-            
-    print(", ".join([f"{i+1}. {e}" for i,e in enumerate(results)]))
+    printed_results=[]
+    d=10
+    parts=len(results)//d
+    remainder=len(results)%parts
+    offset=0
+    for i in range(remainder):
+        printed_results.append(format_results(results[offset:offset+d+1],offset))
+        offset+=d+1
+
+    for i in range(parts-remainder):
+        printed_results.append(format_results(results[offset:offset+d],offset))
+        offset+=d
+    
+    print('\n\n'.join(printed_results))
