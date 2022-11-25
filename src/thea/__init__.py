@@ -18,8 +18,7 @@ else:
 results=[]
 prev_word=""
 curr_word=""
-def get_synonyms(word):
-    return thesaur[word] if word in thesaur else []
+
 
 def checkspelling(word):
     spell = SpellChecker()
@@ -27,16 +26,20 @@ def checkspelling(word):
     for w in misspelled:
         return [_ for _ in list(spell.candidates(w) or []) if _.lower() in thesaur]
 
-def _exit(a,b):
+def _exit():
     print()
     exit()
 
 def format_results(_list,offset=0):
     return ", ".join([f"{offset+i+1}. {e}" for i,e in enumerate(_list)])
     
-signal.signal(signal.SIGINT,_exit)        
-while True:
-    word=input("Enter word to search: ")
+
+
+def get_synonyms(_word=None):
+    global results
+    global prev_word
+    global curr_word
+    word=_word or input("Enter word to search: ")
     word=word.strip().lower()
     if word=="0":
         word=curr_word
@@ -45,9 +48,12 @@ while True:
     if word.isnumeric():
         if not results:
             print(f"Previous word {prev_word} did not have any results")
+            print()
+            return
         elif int(word)<-1 or int(word)>len(results):
             print("Can't do that")
-            continue
+            print()
+            return
         word=results[int(word)-1]
     prev_word=curr_word
     curr_word=word
@@ -57,12 +63,14 @@ while True:
     if results:
         print(f"{word} not found. Did you mean:")
     else:
-        results=get_synonyms(word)
+        results=thesaur[word] if word in thesaur else []
         if not results:
             print("No synonyms found")
             results=[]
+            print()
+            return
     printed_results=[]
-    d=10
+    d=min(10,len(results))
     parts=len(results)//d
     remainder=len(results)%parts
     offset=0
@@ -75,3 +83,17 @@ while True:
         offset+=d
     
     print('\n\n'.join(printed_results))
+
+if len(sys.argv)>1:
+    for word in sys.argv[1:]:
+        get_synonyms(word)
+    _exit()
+try:
+    while True:
+        try:
+            get_synonyms()
+        except KeyboardInterrupt:
+            print()
+            continue
+except EOFError:
+    _exit()
