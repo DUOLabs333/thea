@@ -48,12 +48,10 @@ def get_synonyms(_word=None):
     if word.isnumeric():
         if not results:
             print(f"Previous word {prev_word} did not have any results")
-            print()
-            return
+            
         elif int(word)<-1 or int(word)>len(results):
             print("Can't do that")
-            print()
-            return
+            
         word=results[int(word)-1]
     prev_word=curr_word
     curr_word=word
@@ -67,12 +65,12 @@ def get_synonyms(_word=None):
         if not results:
             print("No synonyms found")
             results=[]
-            print()
-            return
+            
     printed_results=[]
-    d=min(10,len(results))
-    parts=len(results)//d
-    remainder=len(results)%parts
+    d=10
+    remainder=len(results)%d
+    parts=int((len(results)-remainder)/d)
+    
     offset=0
     for i in range(remainder):
         printed_results.append(format_results(results[offset:offset+d+1],offset))
