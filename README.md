@@ -1,5 +1,5 @@
 # Thea
-CLI tool for accessing a local thesaurus. Type word for searching. Can reference a word in a previous search with the number, csn get the current word with 0, and can get the previous word with -1. 
+CLI tool for accessing a local thesaurus. Type word for searching. Reference a word in a previous search using the corresponding number, get the current word with 0, and get the previous word with -1. 
 
 
 ## Running:
